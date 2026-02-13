@@ -1,9 +1,31 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { BikeCard } from '@/components/bikes/bike-card';
+import { LoadingSkeleton } from '@/components/shared/loading-skeleton';
+import { EmptyState } from '@/components/shared/empty-state';
 import { Button } from '@/components/ui/button';
-import { bikes } from '@/hooks/use-mock-data';
+import { bikeApi } from '@/services/bike.api';
+import type { Bike } from '@/types';
 
 export default function HomePage() {
+  const [bikes, setBikes] = useState<Bike[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadBikes = async () => {
+      try {
+        const response = await bikeApi.getBikes();
+        setBikes(response.slice(0, 6));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void loadBikes();
+  }, []);
+
   return (
     <main className="container-page space-y-16">
       <section className="grid gap-8 rounded-3xl border border-border bg-card p-8 shadow-soft md:grid-cols-2">
@@ -28,9 +50,19 @@ export default function HomePage() {
 
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold">Featured Bikes</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {bikes.map((bike) => <BikeCard key={bike.id} bike={bike} />)}
-        </div>
+        {loading ? (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <LoadingSkeleton />
+            <LoadingSkeleton />
+            <LoadingSkeleton />
+          </div>
+        ) : bikes.length ? (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {bikes.map((bike) => <BikeCard key={bike.id} bike={bike} />)}
+          </div>
+        ) : (
+          <EmptyState title="No bikes found" subtitle="Please check again once bikes are available." />
+        )}
       </section>
     </main>
   );

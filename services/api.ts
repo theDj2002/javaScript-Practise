@@ -1,27 +1,30 @@
-import axios from 'axios';
-import type { Booking } from '@/types';
+import axios, { type InternalAxiosRequestConfig } from 'axios';
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v1',
-  timeout: 10000
+  baseURL: 'http://localhost:8080/api/v1',
+  timeout: 15000
+});
+
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+
+  return config;
 });
 
 export const authApi = {
   login: (payload: { phone: string; password?: string; otp?: string }) => api.post('/auth/login', payload)
 };
 
-export const bikesApi = {
-  list: () => api.get('/bikes'),
-  details: (id: string) => api.get(`/bikes/${id}`)
-};
-
-export const bookingsApi = {
-  create: (payload: { bikeId: string; from: string; to: string }) => api.post('/bookings/bookBike', payload),
-  myBookings: () => api.get('/bookings/my'),
-  details: (id: string) => api.get(`/bookings/${id}`),
-  updateAmount: (id: string, amount: number) => api.put(`/admin/bookings/${id}/amount`, { amount }),
-  cancel: (id: string, reason: string) => api.put(`/admin/bookings/${id}/cancel`, { reason }),
-  extend: (id: string, newEndTime: string, reason: string) => api.put(`/admin/bookings/${id}/extend`, { newEndTime, reason })
+export const availabilityApi = {
+  bikeSlots: (bikeId: string, from?: string, to?: string) =>
+    api.get(`/availability/bike/${bikeId}`, {
+      params: { from, to }
+    })
 };
 
 export const paymentsApi = {
@@ -31,5 +34,3 @@ export const paymentsApi = {
 export const invoicesApi = {
   download: (bookingId: string) => api.get(`/invoices/${bookingId}`, { responseType: 'blob' })
 };
-
-export const mockBookings: Booking[] = [];
