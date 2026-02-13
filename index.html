@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bike Rental Application</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">Ride Easy</p>
+      <h1>BikeRentalApplication</h1>
+      <p class="subtitle">Choose a bike, pick your duration, and book in seconds.</p>
+    </div>
+    <button id="viewBookingsBtn" class="ghost-btn">My Bookings</button>
+  </header>
+
+  <main class="layout">
+    <section class="panel filter-panel">
+      <h2>Find Your Ride</h2>
+      <label>
+        City
+        <select id="cityFilter">
+          <option value="All">All Cities</option>
+          <option value="Bangalore">Bangalore</option>
+          <option value="Pune">Pune</option>
+          <option value="Hyderabad">Hyderabad</option>
+        </select>
+      </label>
+
+      <label>
+        Type
+        <select id="typeFilter">
+          <option value="All">All Types</option>
+          <option value="Road">Road</option>
+          <option value="Mountain">Mountain</option>
+          <option value="Electric">Electric</option>
+          <option value="Hybrid">Hybrid</option>
+        </select>
+      </label>
+
+      <label>
+        Max ₹ / hour
+        <input id="priceFilter" type="range" min="10" max="100" value="100" />
+        <span id="priceValue">₹100</span>
+      </label>
+    </section>
+
+    <section class="panel bikes-panel">
+      <div class="panel-heading">
+        <h2>Available Bikes</h2>
+        <p id="resultCount"></p>
+      </div>
+      <div id="bikeList" class="bike-grid"></div>
+    </section>
+
+    <section class="panel booking-panel">
+      <h2>Book a Bike</h2>
+      <form id="bookingForm">
+        <label>
+          Selected Bike
+          <input id="selectedBike" type="text" readonly placeholder="Select a bike from the list" />
+        </label>
+        <label>
+          Hours
+          <input id="hoursInput" type="number" min="1" max="24" value="2" required />
+        </label>
+        <label>
+          Pick-up Date
+          <input id="dateInput" type="date" required />
+        </label>
+        <button type="submit" class="primary-btn">Confirm Booking</button>
+      </form>
+      <p id="bookingMessage" class="message"></p>
+    </section>
+  </main>
+
+  <dialog id="bookingDialog">
+    <h3>Your Bookings</h3>
+    <ul id="bookingList"></ul>
+    <button id="closeDialogBtn" class="ghost-btn">Close</button>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
